@@ -1,45 +1,45 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import parse_qs
 
-form = '''<!DOCTYPE html>
-  <title>我的小贴吧</title>
-  <form method="POST" action="http://localhost:8000/">
+memory=[]
+
+form = '''
+    <!DOCTYPE html>
+    <title>威廉的测试小论坛</title>
+    <form method="POST">
     <textarea name="message"></textarea>
     <br>
-    <button type="submit">点我发布帖子</button>
-  </form>
+    <button type="submit">按我发布帖子</button>
+    </form>
+    <pre>
+    {}
+    </pre>
 '''
 
 
-class MessageHandler(BaseHTTPRequestHandler):
+class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
-        #预判信息长度
         length = int(self.headers.get('Content-length', 0))
-
-        #从request中读取数据.
         data = self.rfile.read(length).decode()
-
-        #提取"message".
         message = parse_qs(data)["message"][0]
+        message = message.replace("<", "&lt;")
+        memory.append(message)
 
-        #发送"message".
-        self.send_response(200)
-        self.send_header('Content-type', 'text/plain; charset=utf-8')
+        self.send_response(303)
+        self.send_header('Location','/')
         self.end_headers()
-        self.wfile.write(message.encode())
+
+
 
     def do_GET(self):
-        # 发送200 OK.
         self.send_response(200)
-
-        # 发送headers.
         self.send_header('Content-type', 'text/html; charset=utf-8')
         self.end_headers()
+        
+        mesg=form.format("\n".join(memory))
+        self.wfile.write(mesg.encode())
 
-        # 加码并发送表格
-        self.wfile.write(form.encode())
-
-if __name__ == '__main__':
-    server_address = ('', 8000)
-    httpd = HTTPServer(server_address, MessageHandler)
-    httpd.serve_forever()
+if __name__ =='__main__':
+	server_address=('',9999)
+	httpd=HTTPServer(server_address,Handler)
+	httpd.serve_forever()

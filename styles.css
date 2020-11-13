@@ -1,0 +1,22 @@
+        #heading{
+            color:orangered;
+            width:500px;
+            height:500px;
+            font-size: 2em
+        }
+        #about_me{
+            color:navajowhite
+        }
+        
+        .intro{
+            color: black
+        }
+        .date{
+            color: aquamarine
+        }
+        .place{
+            color: beige
+        }
+        .like{
+            color: aquamarine
+        }
